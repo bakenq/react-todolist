@@ -1,1 +1,1 @@
-Simple CRUD Todo app with React
+Simple CRUD Todo app with React and Motion
