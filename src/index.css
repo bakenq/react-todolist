@@ -59,6 +59,7 @@ header,
   width: 100%;
   margin: 0 auto;
   gap: var(--base-gap);
+  list-style-type: none;
 }
 
 header input {

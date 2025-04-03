@@ -10,25 +10,33 @@ function App() {
     localStorage.setItem("todos", JSON.stringify({ todos: newList }))
   }
 
-  function handleAddTodos(newTodo) {
+  function handleAddTodos(newTodoText) {
+    if (!newTodoText.trim()) {
+      return
+    }
+
+    const newTodo = {
+      id: Date.now(),
+      text: newTodoText,
+    }
+
     const newTodoList = [...todos, newTodo]
     persistData(newTodoList)
     setTodos(newTodoList)
   }
 
-  function handleDeleteTodos(index) {
-    const newTodoList = todos.filter((todo, todoIndex) => {
-      return todoIndex !== index
-    })
-    setTodos(newTodoList)
+  function handleDeleteTodos(idToDelete) {
+    const newTodoList = todos.filter((todo) => todo.id !== idToDelete)
     persistData(newTodoList)
+    setTodos(newTodoList)  
   }
 
-  function handleEditTodos(index) {
-    const valueToBeEdited = todos[index]
-    setTodoValue(valueToBeEdited)
-    handleDeleteTodos(index)
+  function handleEditTodos(idToEdit) {
+    const todoToEdit = todos.find((todo) => todo.id === idToEdit)
+    if (!todoToEdit) return
 
+    setTodoValue(todoToEdit.text)
+    handleDeleteTodos(idToEdit)
   }
 
   useEffect(() => {
@@ -41,8 +49,30 @@ function App() {
       return
     }
 
-    localTodos = JSON.parse(localTodos).todos
-    setTodos(localTodos)
+    try {
+      const parsedData = JSON.parse(localTodos);
+      // Check format and ensure items are objects with IDs
+      if (parsedData && Array.isArray(parsedData.todos)) {
+        // Ensure loaded todos have IDs, migrate if loading old string data
+         const todosWithIds = parsedData.todos.map((item, index) => {
+            if (typeof item === 'string') {
+               // Convert old string data
+               return { id: Date.now() + index, text: item };
+            }
+            // Ensure existing objects have an ID
+            return { ...item, id: item.id || Date.now() + index };
+         });
+        setTodos(todosWithIds);
+      } else {
+        console.error("Invalid data in localStorage");
+        setTodos([]);
+        localStorage.removeItem("todos"); // Clear bad data
+      }
+    } catch (error) {
+      console.error("Failed to parse localStorage todos", error);
+      setTodos([]);
+       localStorage.removeItem("todos"); // Clear bad data
+    }
   }, [])
 
   return (

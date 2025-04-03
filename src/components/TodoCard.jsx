@@ -1,20 +1,19 @@
 import React from 'react'
 
 export default function TodoCard(props) {
-    const { children, handleEditTodos, handleDeleteTodos, index } = props
+    const { children, handleEditTodos, handleDeleteTodos, id } = props;
 
     return (
-        <li className='todoItem'>
-            {children}
+        <div className='todoItem'>
+            {children} 
             <div className='actionsContainer'>
-                <button onClick={() => { handleEditTodos(index) }}>
-                    <i className="fa-regular fa-pen-to-square fa-xl"></i>
+                <button onClick={() => { handleEditTodos(id) }}>
+                    <i className="fa-regular fa-pen-to-square fa-2x"></i>
                 </button>
-                <button onClick={() => { handleDeleteTodos(index) }}>
-                    <i className="fa-regular fa-trash-can fa-xl"></i>
+                <button onClick={() => { handleDeleteTodos(id) }}>
+                    <i className="fa-regular fa-trash-can fa-2x"></i>
                 </button>
             </div>
-
-        </li>
+        </div>
     )
 }
